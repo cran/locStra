@@ -1,0 +1,16 @@
+12dc18f7e019c67d1fb2b802b0c484d2 *DESCRIPTION
+bf2eab70fff2b06a96748615639fa514 *NAMESPACE
+6169e71688757d28de0b5908d4454e3a *R/RcppExports.R
+b89894ba9ecb60216ebd31f3765a17be *R/localStrat.r
+42298491f7cb55ec398b7f13f04828b7 *inst/REFERENCES.bib
+33ebfc2ad0dfe2acd09023b354191d8f *man/covMatrix.Rd
+5687db416e721fc82d1de3d752f5ffd1 *man/fullscan.Rd
+0dec90bff1b5365d5d483129d08a1bab *man/grMatrix.Rd
+9dab89c3219e97f43b9827e6ec480f80 *man/jaccardMatrix.Rd
+53ebc0a26b0cf5c4cc33770d3e267c29 *man/makeWindows.Rd
+5c279399871138d82cb7ddc4d2fc1f06 *man/powerMethod.Rd
+70b32c9abf2a6f3426659412067ae4b4 *man/sMatrix.Rd
+e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars
+e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars.win
+8e357c09696ac4bfe7dfea2ed7139836 *src/RcppExports.cpp
+d454aa4916a1479d8e6708e41e0194b5 *src/auxcode.cpp
