@@ -171,7 +171,7 @@ sMatrix <- function(m,dense=FALSE,phased=FALSE,minVariants=5) {
 
 
 
-#' Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Wang et.al. (2017).
+#' Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Yang et al. (2011).
 #' 
 #' @param m A (sparse) matrix for which the genomic relationship matrix is sought. The input matrix is assumed to be oriented to contain the data for one individual per column.
 #' @param dense Flag to switch between purpose-built dense or sparse implementations. Default is \code{dense=FALSE}.
@@ -180,7 +180,7 @@ sMatrix <- function(m,dense=FALSE,phased=FALSE,minVariants=5) {
 #' @return The genomic relationship matrix of \code{m}.
 #' 
 #' @importFrom Rdpack reprompt
-#' @references Bowen Wang, Serge Sverdlov and Elizabeth Thompson (2017). Efficient Estimation of Realized Kinship from Single Nucleotide Polymorphism Genotypes. Genetics, 205(3):1063-1078.
+#' @references Yang J, Lee SH, Goddard ME, Visscher PM (2011). GCTA: a tool for genome-wide complex trait analysis. Am J Hum Genet, 88(1):76-82.
 #' 
 #' @examples
 #' library(locStra)

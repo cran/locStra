@@ -2,7 +2,7 @@
 % Please edit documentation in R/localStrat.r
 \name{grMatrix}
 \alias{grMatrix}
-\title{Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Wang et.al. (2017).}
+\title{Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Yang et al. (2011).}
 \usage{
 grMatrix(m, dense = FALSE, robust = TRUE)
 }
@@ -17,7 +17,7 @@ grMatrix(m, dense = FALSE, robust = TRUE)
 The genomic relationship matrix of \code{m}.
 }
 \description{
-Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Wang et.al. (2017).
+Cpp implementation of the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Yang et al. (2011).
 }
 \examples{
 library(locStra)
@@ -28,5 +28,5 @@ print(grMatrix(sparseM))
 
 }
 \references{
-Bowen Wang, Serge Sverdlov and Elizabeth Thompson (2017). Efficient Estimation of Realized Kinship from Single Nucleotide Polymorphism Genotypes. Genetics, 205(3):1063-1078.
+Yang J, Lee SH, Goddard ME, Visscher PM (2011). GCTA: a tool for genome-wide complex trait analysis. Am J Hum Genet, 88(1):76-82.
 }

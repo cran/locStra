@@ -173,14 +173,14 @@ MatrixXd calculateSMatrixDenseCpp(MatrixXd X, bool Djac=false, bool phased=false
 
 
 
-// genomic relationship matrix (classic and robust version of the grm) as defined in
-// "Efficient Estimation of Realized Kinship from Single Nucleotide Polymorphism Genotypes" (Wang, Sverdlov, Thompson, 2017)
+// genomic relationship matrix (classic and robust version of the grm) as defined in:
+// Yang J, Lee SH, Goddard ME, Visscher PM (2011). GCTA: a tool for genome-wide complex trait analysis. Am J Hum Genet, 88(1):76-82.
 // [[Rcpp::export]]
 MatrixXd grmDenseCpp3(MatrixXd X, bool robust=true) {
 	// compute population frequencies across rows
-	VectorXd p = X.rowwise().mean();
+	VectorXd p = 0.5*X.rowwise().mean();
 	VectorXd counterp = 1.0-p.array();
-	VectorXd q = 4.0*p.cwiseProduct(counterp);
+	VectorXd q = 2.0*p.cwiseProduct(counterp);
 	// compute grm
 	X = X.colwise() - 2*p;
 	if(robust) return X.transpose() * X * 1.0/q.sum();
@@ -361,9 +361,9 @@ MatrixXd grmCpp_sparse(MatrixXi T, int nrows, int ncols, bool robust=true) {
 			p(it.row()) += it.value();
 		}
 	}
-	p = p * 1/double(X.cols());
+	p = 0.5 * p * 1/double(X.cols());
 	VectorXd counterp = 1.0-p.array();
-	VectorXd q = 4.0*p.cwiseProduct(counterp);
+	VectorXd q = 2.0*p.cwiseProduct(counterp);
 	// compute grm
 	VectorXd twop = 2*p;
 	if(robust) {
