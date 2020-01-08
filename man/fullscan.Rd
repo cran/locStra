@@ -18,16 +18,30 @@ fullscan(m, windows, matrixFunction, summaryFunction, comparisonFunction)
 \item{comparisonFunction}{Function on two inputs to compute some kind of comparison measure for the output of the function \code{summaryFunction} (e.g., vector correlation, or matrix norm).}
 }
 \value{
-A two-column matrix containing per row the global and local summary statistics for each window.
+A two-column matrix containing per row the global and local summary statistics for each window. Plotting the correlation data of the returned matrix gives a figure analogously to the figure shown here, which was generated with the example code below.
+
+\figure{fig.pdf}{options: width=5in}
 }
 \description{
 Main function: A full scan of the input data \code{m} using a collection of windows given by the two-column matrix \code{windows}. For each window, the data is processed using the function \code{matrixFunction} (this could be e.g. the \code{covMatrix} function), then the processed data is summarised using the function \code{summaryFunction} (e.g., the largest eigenvector computed with the function \code{powerMethod}), and finally the global and local summary scores (e.g., the largest eigenvectors) are compared using the function \code{comparisonFunction} (e.g., the vector correlation with R's function \code{cor}). The function returns a two-column matrix which contains per row the global (e.g., the correlation between global and local eigenvectors) and local (e.g., the correlation between the local eigenvector for the current window and the eigenvector for the last window) summary statistics for each window.
 }
 \examples{
 library(locStra)
-m <- matrix(sample(0:1,1000,replace=TRUE),ncol=10)
-w <- makeWindows(nrow(m),10,10)
-print(fullscan(m,w,covMatrix,powerMethod,cor))
+library(Matrix)
+data(testdata)
+cor2 <- function(x,y) ifelse(sum(x)==0 | sum(y)==0, 0, cor(x,y))
+windowSize <- 10000
+w <- makeWindows(nrow(testdata),windowSize,windowSize)
+resCov <- fullscan(testdata,w,covMatrix,powerMethod,cor2)
+resJac <- fullscan(testdata,w,jaccardMatrix,powerMethod,cor2)
+resSMx <- fullscan(testdata,w,sMatrix,powerMethod,cor2)
+resGRM <- fullscan(testdata,w,grMatrix,powerMethod,cor2)
+resAll <- cbind(resCov[,1], resJac[,1], resSMx[,1], resGRM[,1])
+xlabel <- "SNP position"
+ylabel <- "correlation between global and local eigenvectors"
+mainlabel <- paste("window size",windowSize)
+matplot(w[,1],abs(resAll),type="b",xlab=xlabel,ylab=ylabel,ylim=c(0,1),main=mainlabel)
+legend("topright",legend=c("Cov","Jaccard","s-Matrix","GRM"),pch=paste(1:ncol(resAll)))
 
 }
 \references{
