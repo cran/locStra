@@ -1,4 +1,4 @@
-5d67368fc95764203c5571827ceb7c97 *DESCRIPTION
+ad91b0c49d2822ab3a9d20b775206a7b *DESCRIPTION
 bf2eab70fff2b06a96748615639fa514 *NAMESPACE
 6169e71688757d28de0b5908d4454e3a *R/RcppExports.R
 c8bbed582fb46fbde10bc4f88bd160be *R/localStrat.r
@@ -17,4 +17,4 @@ ea0ced51000b97e66a6b6a4c7e643b77 *man/testdata-data.Rd
 e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars
 e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars.win
 8e357c09696ac4bfe7dfea2ed7139836 *src/RcppExports.cpp
-ddaeb26ba2e1ce0d60098a7d44614606 *src/auxcode.cpp
+05f9a2abf4c0612807c1ad77a10c83de *src/auxcode.cpp

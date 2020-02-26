@@ -76,9 +76,18 @@ MatrixXd covCpp(MatrixXd X) {
 // [[Rcpp::export]]
 MatrixXd jaccardMatrixCpp2(MatrixXd X) {
 	VectorXd colsums = X.colwise().sum();
-	MatrixXd shared = X.transpose() * X;
-	MatrixXd total = ((shared.rowwise() - colsums.transpose()).colwise() - colsums).cwiseAbs();
-	return shared.cwiseQuotient(total);
+	MatrixXd matrix_and = X.transpose() * X;
+	MatrixXd matrix_or = ((matrix_and.rowwise() - colsums.transpose()).colwise() - colsums).cwiseAbs();
+	// go through all entries of "or" matrix and if zero then ensure quotient will be one
+	for(int i=0; i<matrix_or.rows(); i++) {
+		for(int j=0; j<matrix_or.cols(); j++) {
+			if(int(matrix_or(i,j))==0) {
+				matrix_and(i,j) = 1.0;
+				matrix_or(i,j) = 1.0;
+			}
+		}
+	}
+	return matrix_and.cwiseQuotient(matrix_or);
 }
 
 
@@ -132,7 +141,7 @@ MatrixXd calculateSMatrixDenseCpp(MatrixXd X, bool Djac=false, bool phased=false
 	
 	sumVariants = X.rowwise().sum();
 	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>minVariants) sumVariants(i) = 1;
+		if(sumVariants(i)>=minVariants) sumVariants(i) = 1;
 		else sumVariants(i) = 0;
 	}
 	MatrixXd Y = denseSubsetRows(X,sumVariants);
@@ -140,7 +149,11 @@ MatrixXd calculateSMatrixDenseCpp(MatrixXd X, bool Djac=false, bool phased=false
 	VectorXd sumFilteredVariants = Y.rowwise().sum();
 	double totalPossiblePairs = numAlleles*(numAlleles-1)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1)*0.5;
-	VectorXd weights = totalPossiblePairs*totalPairs.array().inverse();
+	VectorXd weights = VectorXd::Zero(totalPairs.size());
+	for(int i=0; i<totalPairs.size(); i++) {
+		if(int(totalPairs(i))<=1) weights(i) = 0;
+		else weights(i) = totalPossiblePairs/totalPairs(i);
+	}
 	
 	MatrixXd s_matrix_numerator;
 	if(!Djac) {
@@ -277,9 +290,18 @@ MatrixXd covCpp_sparse(MatrixXi T, int nrows, int ncols, int rowStart=0, int row
 MatrixXd jaccardMatrixCpp4_sparse(MatrixXi T, int nrows, int ncols) {
 	SparseMatrix<int> X = triplesToMatrix(T,nrows,ncols);
 	VectorXd colsums = sparseColSums(X);
-	MatrixXd shared = (X.transpose() * X).cast<double>();
-	MatrixXd total = ((shared.rowwise() - colsums.transpose()).colwise() - colsums).cwiseAbs();
-	return shared.cwiseQuotient(total);
+	MatrixXd matrix_and = (X.transpose() * X).cast<double>();
+	MatrixXd matrix_or = ((matrix_and.rowwise() - colsums.transpose()).colwise() - colsums).cwiseAbs();
+	// go through all entries of "or" matrix and if zero then ensure quotient will be one
+	for(int i=0; i<matrix_or.rows(); i++) {
+		for(int j=0; j<matrix_or.cols(); j++) {
+			if(int(matrix_or(i,j))==0) {
+				matrix_and(i,j) = 1.0;
+				matrix_or(i,j) = 1.0;
+			}
+		}
+	}
+	return matrix_and.cwiseQuotient(matrix_or);
 }
 
 
@@ -304,7 +326,7 @@ MatrixXd calculateSMatrixCpp(MatrixXi T, int nrows, int ncols, bool Djac=false, 
 	
 	sumVariants = sparseRowSums(X);
 	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>minVariants) sumVariants(i) = 1;
+		if(sumVariants(i)>=minVariants) sumVariants(i) = 1;
 		else sumVariants(i) = 0;
 	}
 	SparseMatrix<int> Y = subsetRows(X,sumVariants);
@@ -312,7 +334,11 @@ MatrixXd calculateSMatrixCpp(MatrixXi T, int nrows, int ncols, bool Djac=false, 
 	VectorXd sumFilteredVariants = sparseRowSums(Y);
 	double totalPossiblePairs = numAlleles*(numAlleles-1)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1)*0.5;
-	VectorXd weights = totalPossiblePairs*totalPairs.array().inverse();
+	VectorXd weights = VectorXd::Zero(totalPairs.size());
+	for(int i=0; i<totalPairs.size(); i++) {
+		if(int(totalPairs(i))<=1) weights(i) = 0;
+		else weights(i) = totalPossiblePairs/totalPairs(i);
+	}
 	
 	MatrixXd s_matrix_numerator;
 	if(!Djac) {
