@@ -144,7 +144,7 @@ jaccardMatrix <- function(m,dense=FALSE) {
 #' @param m A (sparse) matrix for which the s-matrix is sought. The input matrix is assumed to be oriented to contain the data for one individual per column.
 #' @param dense Flag to switch between purpose-built dense or sparse implementations. Default is \code{dense=FALSE}.
 #' @param phased Boolean flag to indicate if input matrix is phased. Default is \code{phased=FALSE}.
-#' @param minVariants Integer cutoff value for minimal number of variants. Default is \code{minVariants=5}.
+#' @param minVariants Integer cutoff value for minimal number of variants. Default is \code{minVariants=0}
 #' 
 #' @return The s-matrix (the weighted Jaccard matrix) of \code{m}.
 #' 
@@ -159,7 +159,7 @@ jaccardMatrix <- function(m,dense=FALSE) {
 #' print(sMatrix(sparseM))
 #' 
 #' @export
-sMatrix <- function(m,dense=FALSE,phased=FALSE,minVariants=5) {
+sMatrix <- function(m,dense=FALSE,phased=FALSE,minVariants=0) {
 	Djac <- F
 	if(dense) {
 		return(calculateSMatrixDenseCpp(as.matrix(m),Djac,phased,minVariants))

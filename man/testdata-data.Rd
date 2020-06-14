@@ -4,7 +4,9 @@
 \name{testdata}
 \alias{testdata}
 \title{Simulated test data.}
-\format{A matrix with 100,000 rows and 100 columns.}
+\format{
+A matrix with 100,000 rows and 100 columns.
+}
 \usage{
 data(testdata)
 }

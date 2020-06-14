@@ -1,7 +1,7 @@
-ad91b0c49d2822ab3a9d20b775206a7b *DESCRIPTION
+cee799087cf7869dec263c69c201a325 *DESCRIPTION
 bf2eab70fff2b06a96748615639fa514 *NAMESPACE
 6169e71688757d28de0b5908d4454e3a *R/RcppExports.R
-c8bbed582fb46fbde10bc4f88bd160be *R/localStrat.r
+f5d5e6b03c43090dd1919c7ba79e71bc *R/localStrat.r
 13fd92724702b971756998410392eda4 *R/testdata.R
 d07b215d0da803042a06bc4d2856321f *data/testdata.RData
 5e812fd6d62caa2bd79129c2ea7685ff *inst/REFERENCES.bib
@@ -12,9 +12,7 @@ d07b215d0da803042a06bc4d2856321f *data/testdata.RData
 9dab89c3219e97f43b9827e6ec480f80 *man/jaccardMatrix.Rd
 53ebc0a26b0cf5c4cc33770d3e267c29 *man/makeWindows.Rd
 5c279399871138d82cb7ddc4d2fc1f06 *man/powerMethod.Rd
-70b32c9abf2a6f3426659412067ae4b4 *man/sMatrix.Rd
-ea0ced51000b97e66a6b6a4c7e643b77 *man/testdata-data.Rd
-e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars
-e0ecb37bb42d118c5e2cff34b02805e4 *src/Makevars.win
+db8630aedde797ebed5c20e39c30e0f8 *man/sMatrix.Rd
+08719c560d9c3b0ba07b445e78fe98d8 *man/testdata-data.Rd
 8e357c09696ac4bfe7dfea2ed7139836 *src/RcppExports.cpp
 05f9a2abf4c0612807c1ad77a10c83de *src/auxcode.cpp
