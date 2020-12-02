@@ -8,44 +8,44 @@ using namespace Rcpp;
 using namespace Eigen;
 
 // powerMethodCpp
-VectorXd powerMethodCpp(MatrixXd X, VectorXd v, double eps, int maxiter);
+VectorXd powerMethodCpp(MatrixXd& X, VectorXd& v, double eps, int maxiter);
 RcppExport SEXP _locStra_powerMethodCpp(SEXP XSEXP, SEXP vSEXP, SEXP epsSEXP, SEXP maxiterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< VectorXd >::type v(vSEXP);
+    Rcpp::traits::input_parameter< MatrixXd& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< VectorXd& >::type v(vSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
     Rcpp::traits::input_parameter< int >::type maxiter(maxiterSEXP);
     rcpp_result_gen = Rcpp::wrap(powerMethodCpp(X, v, eps, maxiter));
     return rcpp_result_gen;
 END_RCPP
 }
-// covCpp
-MatrixXd covCpp(MatrixXd X);
-RcppExport SEXP _locStra_covCpp(SEXP XSEXP) {
+// covMatrixCpp_dense
+MatrixXd covMatrixCpp_dense(MatrixXd& X);
+RcppExport SEXP _locStra_covMatrixCpp_dense(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(covCpp(X));
+    Rcpp::traits::input_parameter< MatrixXd& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(covMatrixCpp_dense(X));
     return rcpp_result_gen;
 END_RCPP
 }
-// jaccardMatrixCpp2
-MatrixXd jaccardMatrixCpp2(MatrixXd X);
-RcppExport SEXP _locStra_jaccardMatrixCpp2(SEXP XSEXP) {
+// jaccardMatrixCpp_dense
+MatrixXd jaccardMatrixCpp_dense(MatrixXd& X);
+RcppExport SEXP _locStra_jaccardMatrixCpp_dense(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(jaccardMatrixCpp2(X));
+    Rcpp::traits::input_parameter< MatrixXd& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(jaccardMatrixCpp_dense(X));
     return rcpp_result_gen;
 END_RCPP
 }
-// calculateSMatrixDenseCpp
-MatrixXd calculateSMatrixDenseCpp(MatrixXd X, bool Djac, bool phased, int minVariants);
-RcppExport SEXP _locStra_calculateSMatrixDenseCpp(SEXP XSEXP, SEXP DjacSEXP, SEXP phasedSEXP, SEXP minVariantsSEXP) {
+// sMatrixCpp_dense
+MatrixXd sMatrixCpp_dense(MatrixXd X, bool Djac, bool phased, int minVariants);
+RcppExport SEXP _locStra_sMatrixCpp_dense(SEXP XSEXP, SEXP DjacSEXP, SEXP phasedSEXP, SEXP minVariantsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,75 +53,71 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type Djac(DjacSEXP);
     Rcpp::traits::input_parameter< bool >::type phased(phasedSEXP);
     Rcpp::traits::input_parameter< int >::type minVariants(minVariantsSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateSMatrixDenseCpp(X, Djac, phased, minVariants));
+    rcpp_result_gen = Rcpp::wrap(sMatrixCpp_dense(X, Djac, phased, minVariants));
     return rcpp_result_gen;
 END_RCPP
 }
-// grmDenseCpp3
-MatrixXd grmDenseCpp3(MatrixXd X, bool robust);
-RcppExport SEXP _locStra_grmDenseCpp3(SEXP XSEXP, SEXP robustSEXP) {
+// grmCpp_dense
+MatrixXd grmCpp_dense(MatrixXd X, bool robust);
+RcppExport SEXP _locStra_grmCpp_dense(SEXP XSEXP, SEXP robustSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
-    rcpp_result_gen = Rcpp::wrap(grmDenseCpp3(X, robust));
+    rcpp_result_gen = Rcpp::wrap(grmCpp_dense(X, robust));
     return rcpp_result_gen;
 END_RCPP
 }
-// covCpp_sparse
-MatrixXd covCpp_sparse(MatrixXi T, int nrows, int ncols, int rowStart, int rowEnd);
-RcppExport SEXP _locStra_covCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP rowStartSEXP, SEXP rowEndSEXP) {
+// covMatrixCpp_sparse
+MatrixXd covMatrixCpp_sparse(MatrixXd& T, int nrows, int ncols);
+RcppExport SEXP _locStra_covMatrixCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXi >::type T(TSEXP);
+    Rcpp::traits::input_parameter< MatrixXd& >::type T(TSEXP);
     Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
     Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
-    Rcpp::traits::input_parameter< int >::type rowStart(rowStartSEXP);
-    Rcpp::traits::input_parameter< int >::type rowEnd(rowEndSEXP);
-    rcpp_result_gen = Rcpp::wrap(covCpp_sparse(T, nrows, ncols, rowStart, rowEnd));
+    rcpp_result_gen = Rcpp::wrap(covMatrixCpp_sparse(T, nrows, ncols));
     return rcpp_result_gen;
 END_RCPP
 }
-// jaccardMatrixCpp4_sparse
-MatrixXd jaccardMatrixCpp4_sparse(MatrixXi T, int nrows, int ncols);
-RcppExport SEXP _locStra_jaccardMatrixCpp4_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP) {
+// jaccardMatrixCpp_sparse
+MatrixXd jaccardMatrixCpp_sparse(MatrixXi& T, int nrows, int ncols);
+RcppExport SEXP _locStra_jaccardMatrixCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXi >::type T(TSEXP);
+    Rcpp::traits::input_parameter< MatrixXi& >::type T(TSEXP);
     Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
     Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
-    rcpp_result_gen = Rcpp::wrap(jaccardMatrixCpp4_sparse(T, nrows, ncols));
+    rcpp_result_gen = Rcpp::wrap(jaccardMatrixCpp_sparse(T, nrows, ncols));
     return rcpp_result_gen;
 END_RCPP
 }
-// calculateSMatrixCpp
-MatrixXd calculateSMatrixCpp(MatrixXi T, int nrows, int ncols, bool Djac, bool phased, int minVariants, int rowStart, int rowEnd);
-RcppExport SEXP _locStra_calculateSMatrixCpp(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP DjacSEXP, SEXP phasedSEXP, SEXP minVariantsSEXP, SEXP rowStartSEXP, SEXP rowEndSEXP) {
+// sMatrixCpp_sparse
+MatrixXd sMatrixCpp_sparse(MatrixXi& T, int nrows, int ncols, bool Djac, bool phased, int minVariants);
+RcppExport SEXP _locStra_sMatrixCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP DjacSEXP, SEXP phasedSEXP, SEXP minVariantsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXi >::type T(TSEXP);
+    Rcpp::traits::input_parameter< MatrixXi& >::type T(TSEXP);
     Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
     Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
     Rcpp::traits::input_parameter< bool >::type Djac(DjacSEXP);
     Rcpp::traits::input_parameter< bool >::type phased(phasedSEXP);
     Rcpp::traits::input_parameter< int >::type minVariants(minVariantsSEXP);
-    Rcpp::traits::input_parameter< int >::type rowStart(rowStartSEXP);
-    Rcpp::traits::input_parameter< int >::type rowEnd(rowEndSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateSMatrixCpp(T, nrows, ncols, Djac, phased, minVariants, rowStart, rowEnd));
+    rcpp_result_gen = Rcpp::wrap(sMatrixCpp_sparse(T, nrows, ncols, Djac, phased, minVariants));
     return rcpp_result_gen;
 END_RCPP
 }
 // grmCpp_sparse
-MatrixXd grmCpp_sparse(MatrixXi T, int nrows, int ncols, bool robust);
+MatrixXd grmCpp_sparse(MatrixXd& T, int nrows, int ncols, bool robust);
 RcppExport SEXP _locStra_grmCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP robustSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< MatrixXi >::type T(TSEXP);
+    Rcpp::traits::input_parameter< MatrixXd& >::type T(TSEXP);
     Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
     Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
     Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
@@ -129,17 +125,143 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fastCovEVsCpp_dense
+MatrixXd fastCovEVsCpp_dense(MatrixXd& X, int k, int q);
+RcppExport SEXP _locStra_fastCovEVsCpp_dense(SEXP XSEXP, SEXP kSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastCovEVsCpp_dense(X, k, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastJaccardEVsCpp_dense
+MatrixXd fastJaccardEVsCpp_dense(MatrixXd X, int k, int q);
+RcppExport SEXP _locStra_fastJaccardEVsCpp_dense(SEXP XSEXP, SEXP kSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastJaccardEVsCpp_dense(X, k, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastSMatrixEVsCpp_dense
+MatrixXd fastSMatrixEVsCpp_dense(MatrixXd X, int k, bool Djac, int minVariants, int q);
+RcppExport SEXP _locStra_fastSMatrixEVsCpp_dense(SEXP XSEXP, SEXP kSEXP, SEXP DjacSEXP, SEXP minVariantsSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type Djac(DjacSEXP);
+    Rcpp::traits::input_parameter< int >::type minVariants(minVariantsSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastSMatrixEVsCpp_dense(X, k, Djac, minVariants, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastGrmEVsCpp_dense
+MatrixXd fastGrmEVsCpp_dense(MatrixXd& X, int k, bool robust, int q);
+RcppExport SEXP _locStra_fastGrmEVsCpp_dense(SEXP XSEXP, SEXP kSEXP, SEXP robustSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastGrmEVsCpp_dense(X, k, robust, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastCovEVsCpp_sparse
+MatrixXd fastCovEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, int q);
+RcppExport SEXP _locStra_fastCovEVsCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP kSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd& >::type T(TSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastCovEVsCpp_sparse(T, nrows, ncols, k, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastJaccardEVsCpp_sparse
+MatrixXd fastJaccardEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, int q);
+RcppExport SEXP _locStra_fastJaccardEVsCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP kSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd& >::type T(TSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastJaccardEVsCpp_sparse(T, nrows, ncols, k, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastSMatrixEVsCpp_sparse
+MatrixXd fastSMatrixEVsCpp_sparse(MatrixXi& T, int nrows, int ncols, int k, bool Djac, int minVariants, int q);
+RcppExport SEXP _locStra_fastSMatrixEVsCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP kSEXP, SEXP DjacSEXP, SEXP minVariantsSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXi& >::type T(TSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type Djac(DjacSEXP);
+    Rcpp::traits::input_parameter< int >::type minVariants(minVariantsSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastSMatrixEVsCpp_sparse(T, nrows, ncols, k, Djac, minVariants, q));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastGrmEVsCpp_sparse
+MatrixXd fastGrmEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, bool robust, int q);
+RcppExport SEXP _locStra_fastGrmEVsCpp_sparse(SEXP TSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP kSEXP, SEXP robustSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< MatrixXd& >::type T(TSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type robust(robustSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastGrmEVsCpp_sparse(T, nrows, ncols, k, robust, q));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_locStra_powerMethodCpp", (DL_FUNC) &_locStra_powerMethodCpp, 4},
-    {"_locStra_covCpp", (DL_FUNC) &_locStra_covCpp, 1},
-    {"_locStra_jaccardMatrixCpp2", (DL_FUNC) &_locStra_jaccardMatrixCpp2, 1},
-    {"_locStra_calculateSMatrixDenseCpp", (DL_FUNC) &_locStra_calculateSMatrixDenseCpp, 4},
-    {"_locStra_grmDenseCpp3", (DL_FUNC) &_locStra_grmDenseCpp3, 2},
-    {"_locStra_covCpp_sparse", (DL_FUNC) &_locStra_covCpp_sparse, 5},
-    {"_locStra_jaccardMatrixCpp4_sparse", (DL_FUNC) &_locStra_jaccardMatrixCpp4_sparse, 3},
-    {"_locStra_calculateSMatrixCpp", (DL_FUNC) &_locStra_calculateSMatrixCpp, 8},
+    {"_locStra_covMatrixCpp_dense", (DL_FUNC) &_locStra_covMatrixCpp_dense, 1},
+    {"_locStra_jaccardMatrixCpp_dense", (DL_FUNC) &_locStra_jaccardMatrixCpp_dense, 1},
+    {"_locStra_sMatrixCpp_dense", (DL_FUNC) &_locStra_sMatrixCpp_dense, 4},
+    {"_locStra_grmCpp_dense", (DL_FUNC) &_locStra_grmCpp_dense, 2},
+    {"_locStra_covMatrixCpp_sparse", (DL_FUNC) &_locStra_covMatrixCpp_sparse, 3},
+    {"_locStra_jaccardMatrixCpp_sparse", (DL_FUNC) &_locStra_jaccardMatrixCpp_sparse, 3},
+    {"_locStra_sMatrixCpp_sparse", (DL_FUNC) &_locStra_sMatrixCpp_sparse, 6},
     {"_locStra_grmCpp_sparse", (DL_FUNC) &_locStra_grmCpp_sparse, 4},
+    {"_locStra_fastCovEVsCpp_dense", (DL_FUNC) &_locStra_fastCovEVsCpp_dense, 3},
+    {"_locStra_fastJaccardEVsCpp_dense", (DL_FUNC) &_locStra_fastJaccardEVsCpp_dense, 3},
+    {"_locStra_fastSMatrixEVsCpp_dense", (DL_FUNC) &_locStra_fastSMatrixEVsCpp_dense, 5},
+    {"_locStra_fastGrmEVsCpp_dense", (DL_FUNC) &_locStra_fastGrmEVsCpp_dense, 4},
+    {"_locStra_fastCovEVsCpp_sparse", (DL_FUNC) &_locStra_fastCovEVsCpp_sparse, 5},
+    {"_locStra_fastJaccardEVsCpp_sparse", (DL_FUNC) &_locStra_fastJaccardEVsCpp_sparse, 5},
+    {"_locStra_fastSMatrixEVsCpp_sparse", (DL_FUNC) &_locStra_fastSMatrixEVsCpp_sparse, 7},
+    {"_locStra_fastGrmEVsCpp_sparse", (DL_FUNC) &_locStra_fastGrmEVsCpp_sparse, 6},
     {NULL, NULL, 0}
 };
 
