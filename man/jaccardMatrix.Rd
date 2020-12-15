@@ -20,8 +20,8 @@ The Jaccard matrix of \code{m}.
 C++ implementation to compute the Jaccard similarity matrix for a (sparse) input matrix.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 sparseM <- Matrix(m,sparse=TRUE)
 print(jaccardMatrix(sparseM))

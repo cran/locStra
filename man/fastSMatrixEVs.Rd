@@ -36,11 +36,11 @@ The k leading eigenvectors of the s-matrix of \code{m} as a column matrix.
 Computation of the k leading eigenvectors of the s-matrix (the weighted Jaccard similarity matrix) for a (sparse) input matrix. Note that in contrast to the parameters of the function \code{sMatrix}, the choice \code{phased=FALSE} cannot be modified for the fast eigenvector computation.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 sparseM <- Matrix(m,sparse=TRUE)
-print(fastSMatrixEVs(sparseM,k=2))
+print(fastSMatrixEVs(sparseM,k=2,useCpp=FALSE))
 
 }
 \references{

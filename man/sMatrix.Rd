@@ -33,8 +33,8 @@ The s-matrix (the weighted Jaccard matrix) of \code{m}.
 C++ implementation to compute the s-matrix (the weighted Jaccard similarity matrix) for a (sparse) input matrix as in the 'Stego' package: https://github.com/dschlauch/stego
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 sparseM <- Matrix(m,sparse=TRUE)
 print(sMatrix(sparseM))

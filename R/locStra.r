@@ -45,7 +45,7 @@ sparseToList <- function(m) {
 #' @importFrom Rdpack reprompt
 #' 
 #' @examples
-#' library(locStra)
+#' require(locStra)
 #' print(makeWindows(100,10,5))
 #' 
 #' @export
@@ -74,7 +74,7 @@ makeWindows <- function(len,size,offset) {
 #' @references Richard von Mises and Hilda Pollaczek-Geiringer (1929). Praktische Verfahren der Gleichungsaufloesung. ZAMM Zeitschrift fuer Angewandte Mathematik und Mechanik, 9:152-164.
 #' 
 #' @examples
-#' library(locStra)
+#' require(locStra)
 #' m <- matrix(1:9,3)
 #' print(powerMethod(m))
 #' 
@@ -290,8 +290,8 @@ fastGrmEVsR <- function(X, k, robust=TRUE, q=2) {
 #' @references R Core Team (2014). R: A Language and Environment for Statistical Computing. R Foundation for Stat Comp, Vienna, Austria.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 #' sparseM <- Matrix(m,sparse=TRUE)
 #' print(covMatrix(sparseM))
@@ -322,8 +322,8 @@ covMatrix <- function(m,useCpp=TRUE,sparse=TRUE) {
 #' @references Dmitry Prokopenko, Julian Hecker, Edwin Silverman, Marcello Pagano, Markus Noethen, Christian Dina, Christoph Lange and Heide Fier (2016). Utilizing the Jaccard index to reveal population stratification in sequencing data: a simulation study and an application to the 1000 Genomes Project. Bioinformatics, 32(9):1366-1372.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 #' sparseM <- Matrix(m,sparse=TRUE)
 #' print(jaccardMatrix(sparseM))
@@ -356,8 +356,8 @@ jaccardMatrix <- function(m,useCpp=TRUE,sparse=TRUE) {
 #' @references Daniel Schlauch (2016). Implementation of the stego algorithm - Similarity Test for Estimating Genetic Outliers. https://github.com/dschlauch/stego
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 #' sparseM <- Matrix(m,sparse=TRUE)
 #' print(sMatrix(sparseM))
@@ -388,8 +388,8 @@ sMatrix <- function(m,useCpp=TRUE,sparse=TRUE,Djac=FALSE,phased=FALSE,minVariant
 #' @references Yang J, Lee SH, Goddard ME, Visscher PM (2011). GCTA: a tool for genome-wide complex trait analysis. Am J Hum Genet, 88(1):76-82.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 #' sparseM <- Matrix(m,sparse=TRUE)
 #' print(grMatrix(sparseM))
@@ -424,8 +424,8 @@ grMatrix <- function(m,useCpp=TRUE,sparse=TRUE,robust=TRUE) {
 #' @references Dmitry Prokopenko, Julian Hecker, Edwin Silverman, Marcello Pagano, Markus Noethen, Christian Dina, Christoph Lange and Heide Fier (2016). Utilizing the Jaccard index to reveal population stratification in sequencing data: a simulation study and an application to the 1000 Genomes Project. Bioinformatics, 32(9):1366-1372.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' data(testdata)
 #' cor2 <- function(x,y) ifelse(sum(x)==0 | sum(y)==0, 0, cor(x,y))
 #' windowSize <- 10000
@@ -479,11 +479,11 @@ fullscan <- function(m,windows,matrixFunction,summaryFunction,comparisonFunction
 #' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 #' sparseM <- Matrix(m,sparse=TRUE)
-#' print(fastCovEVs(sparseM,k=2))
+#' print(fastCovEVs(sparseM,k=2,useCpp=FALSE))
 #' 
 #' @export
 fastCovEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
@@ -513,11 +513,11 @@ fastCovEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
 #' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 #' sparseM <- Matrix(m,sparse=TRUE)
-#' print(fastJaccardEVs(sparseM,k=2))
+#' print(fastJaccardEVs(sparseM,k=2,useCpp=FALSE))
 #' 
 #' @export
 fastJaccardEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
@@ -549,11 +549,11 @@ fastJaccardEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
 #' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 #' sparseM <- Matrix(m,sparse=TRUE)
-#' print(fastSMatrixEVs(sparseM,k=2))
+#' print(fastSMatrixEVs(sparseM,k=2,useCpp=FALSE))
 #' 
 #' @export
 fastSMatrixEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,Djac=FALSE,minVariants=0,q=2) {
@@ -584,11 +584,11 @@ fastSMatrixEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,Djac=FALSE,minVariants=0,
 #' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
 #' 
 #' @examples
-#' library(locStra)
-#' library(Matrix)
+#' require(locStra)
+#' require(Matrix)
 #' m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 #' sparseM <- Matrix(m,sparse=TRUE)
-#' print(fastGrmEVs(sparseM,k=2))
+#' print(fastGrmEVs(sparseM,k=2,useCpp=FALSE))
 #' 
 #' @export
 fastGrmEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,robust=TRUE,q=2) {

@@ -24,11 +24,11 @@ The k leading eigenvectors of the Jaccard matrix of \code{m} as a column matrix.
 Computation of the k leading eigenvectors of the Jaccard similarity matrix for a (sparse) input matrix. Note that this computation is only approximate and does not necessarily coincide with the result obtained by extracting the k leading eigenvectors of the Jaccard matrix computed with the function \code{jaccardMatrix}.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 sparseM <- Matrix(m,sparse=TRUE)
-print(fastJaccardEVs(sparseM,k=2))
+print(fastJaccardEVs(sparseM,k=2,useCpp=FALSE))
 
 }
 \references{

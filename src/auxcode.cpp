@@ -559,7 +559,7 @@ MatrixXd fastGrmEVsCpp_dense(MatrixXd& X, int k, bool robust=true, int q=2) {
 		return randomizedSVD_XtX_Cpp_dense(a,v,X,w,k,q);
 	}
 	else {
-		double a = 1.0/sqrt(X.rows());
+		double a = 1.0/sqrt(double(X.rows()));
 		VectorXd v = qv.array().cwiseSqrt().inverse();
 		VectorXd w = 2.0*p;
 		return randomizedSVD_XtX_Cpp_dense(a,v,X,w,k,q);
@@ -708,7 +708,7 @@ MatrixXd fastGrmEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, bool rob
 		return randomizedSVD_XtX_Cpp_sparse(a,v,X,w,k,q);
 	}
 	else {
-		double a = 1.0/sqrt(X.rows());
+		double a = 1.0/sqrt(double(X.rows()));
 		VectorXd v = qv.array().cwiseSqrt().inverse();
 		VectorXd w = 2.0*p;
 		return randomizedSVD_XtX_Cpp_sparse(a,v,X,w,k,q);

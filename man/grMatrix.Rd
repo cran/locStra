@@ -22,8 +22,8 @@ The genomic relationship matrix of \code{m}.
 C++ implementation to compute the genomic relationship matrix (grm) for a (sparse) input matrix as defined in Yang et al. (2011).
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 sparseM <- Matrix(m,sparse=TRUE)
 print(grMatrix(sparseM))

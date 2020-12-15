@@ -20,7 +20,7 @@ A two-column matrix of sliding windows, with one window per row defined through 
 Auxiliary function to generate a two-column matrix of windows to be used in the function 'fullscan'.
 }
 \examples{
-library(locStra)
+require(locStra)
 print(makeWindows(100,10,5))
 
 }

@@ -24,11 +24,11 @@ The k leading eigenvectors of the covariance matrix of \code{m} as a column matr
 Computation of the k leading eigenvectors of the covariance matrix for a (sparse) input matrix.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 sparseM <- Matrix(m,sparse=TRUE)
-print(fastCovEVs(sparseM,k=2))
+print(fastCovEVs(sparseM,k=2,useCpp=FALSE))
 
 }
 \references{

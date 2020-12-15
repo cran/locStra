@@ -20,8 +20,8 @@ The covariance matrix of \code{m}.
 C++ implementation to compute the covariance matrix for a (sparse) input matrix. The function is equivalent to the R command 'cov' applied to matrices.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,15,replace=TRUE),ncol=3)
 sparseM <- Matrix(m,sparse=TRUE)
 print(covMatrix(sparseM))

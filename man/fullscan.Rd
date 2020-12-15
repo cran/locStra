@@ -26,8 +26,8 @@ A two-column matrix containing per row the global and local summary statistics f
 A full scan of the input data \code{m} using a collection of windows given by the two-column matrix \code{windows}. For each window, the data is processed using the function \code{matrixFunction} (this could be, e.g., the \code{covMatrix} function), then the processed data is summarized using the function \code{summaryFunction} (e.g., the largest eigenvector computed with the function \code{powerMethod}), and finally the global and local summaries are compared using the function \code{comparisonFunction} (e.g., the vector correlation with R's function \code{cor}). The function returns a two-column matrix which contains per row the global summary statistics (e.g., the correlation between the global and local eigenvectors) and the local summary statistics (e.g., the correlation between the local eigenvectors of the previous and current windows) for each window.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 data(testdata)
 cor2 <- function(x,y) ifelse(sum(x)==0 | sum(y)==0, 0, cor(x,y))
 windowSize <- 10000

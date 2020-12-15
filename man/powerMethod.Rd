@@ -18,7 +18,7 @@ The largest eigenvector of \code{m}.
 C++ implementation of the power method (von Mises iteration) to compute the largest eigenvector of a dense input matrix.
 }
 \examples{
-library(locStra)
+require(locStra)
 m <- matrix(1:9,3)
 print(powerMethod(m))
 

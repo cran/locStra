@@ -26,11 +26,11 @@ The k leading eigenvectors of the genomic relationship matrix of \code{m} as a c
 Computation of the k leading eigenvectors of the genomic relationship matrix, defined in Yang et al. (2011), for a (sparse) input matrix.
 }
 \examples{
-library(locStra)
-library(Matrix)
+require(locStra)
+require(Matrix)
 m <- matrix(sample(0:1,100,replace=TRUE),ncol=5)
 sparseM <- Matrix(m,sparse=TRUE)
-print(fastGrmEVs(sparseM,k=2))
+print(fastGrmEVs(sparseM,k=2,useCpp=FALSE))
 
 }
 \references{
