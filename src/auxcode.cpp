@@ -68,6 +68,7 @@ VectorXd powerMethodCpp(MatrixXd& X, VectorXd& v, double eps=1e-6, int maxiter=1
 // cpp function to write a sparse matrix with integer entries
 SparseMatrix<int> triplesToSparseIntMatrix(MatrixXi& T, int nrows, int ncols) {
 	SparseMatrix<int> X(nrows,ncols);
+	X.reserve(T.rows());
 	for(int i=0; i<T.rows(); i++) {
 		X.insert(T(i,0),T(i,1)) = T(i,2);
 	}
@@ -77,6 +78,7 @@ SparseMatrix<int> triplesToSparseIntMatrix(MatrixXi& T, int nrows, int ncols) {
 // cpp function to write a sparse matrix with double entries
 SparseMatrix<double> triplesToSparseDoubleMatrix(MatrixXd& T, int nrows, int ncols) {
 	SparseMatrix<double> X(nrows,ncols);
+	X.reserve(T.rows());
 	for(int i=0; i<T.rows(); i++) {
 		X.insert(int(T(i,0)),int(T(i,1))) = T(i,2);
 	}
@@ -86,43 +88,10 @@ SparseMatrix<double> triplesToSparseDoubleMatrix(MatrixXd& T, int nrows, int nco
 // multiply columns of sparse matrix with "v"
 SparseMatrix<double> colMultiplySparseDoubleMatrix(SparseMatrix<double>& X, VectorXd& v) {
 	SparseMatrix<double> Y(X.rows(),X.cols());
+	Y.reserve(X.nonZeros());
 	for(int k=0; k<X.outerSize(); k++) {
 		for(SparseMatrix<double>::InnerIterator it(X,k); it; ++it) {
 			Y.insert(it.row(),it.col()) = it.value()*v(it.row());
-		}
-	}
-	return Y;
-}
-
-// subset of rows according to indicator vector "v" for dense matrix
-MatrixXd subsetRowsDenseMatrix(MatrixXd& X, VectorXd& v) {
-	MatrixXd res = MatrixXd::Zero(int(v.sum()),X.cols());
-	int rowcounter = 0;
-	for(int i=0; i<v.size(); i++) {
-		if(int(v(i))==1) {
-			res.row(rowcounter) = X.row(i);
-			rowcounter++;
-		}
-	}
-	return res;
-}
-
-// subset of rows according to indicator vector "v" for sparse matrix
-SparseMatrix<double> subsetRowsSparseIntMatrix(SparseMatrix<int>& X, VectorXd& v) {
-	// assign new row numbers
-	VectorXi w = VectorXi::Zero(v.size());
-	int counter = 0;
-	for(int i=0; i<v.size(); i++) {
-		if(int(v(i))==1) {
-			w(i) = counter;
-			counter++;
-		}
-	}
-	// now copy only the rows in w
-	SparseMatrix<double> Y(counter,X.cols());
-	for(int k=0; k<X.outerSize(); k++) {
-		for(SparseMatrix<int>::InnerIterator it(X,k); it; ++it) {
-			if(int(v(it.row()))==1) Y.insert(w(it.row()),it.col()) = it.value();
 		}
 	}
 	return Y;
@@ -146,17 +115,6 @@ MatrixXd subDenseMatrix(MatrixXd& X, VectorXd& rows, VectorXd& cols) {
 		}
 	}
 	return res;
-}
-
-// row sums for sparse integer matrix
-VectorXd rowSumsSparseIntMatrix(SparseMatrix<int>& X) {
-	VectorXd v = VectorXd::Zero(X.rows());
-	for(int k=0; k<X.outerSize(); k++) {
-		for(SparseMatrix<int>::InnerIterator it(X,k); it; ++it) {
-			v[it.row()] += it.value();
-		}
-	}
-	return v;
 }
 
 // row sums for sparse double matrix
@@ -237,7 +195,7 @@ MatrixXd jaccardMatrixCpp_dense(MatrixXd& X) {
 
 // cpp function to compute the s-matrix
 // [[Rcpp::export]]
-MatrixXd sMatrixCpp_dense(MatrixXd X, bool Djac=false, bool phased=false, int minVariants=0) {
+MatrixXd sMatrixCpp_dense(MatrixXd X, bool Djac=false, bool phased=false) {
 	double numAlleles = X.cols();
 	if(!phased) numAlleles *= 2.0;
 	VectorXd sumVariants = X.rowwise().sum();
@@ -249,14 +207,7 @@ MatrixXd sMatrixCpp_dense(MatrixXd X, bool Djac=false, bool phased=false, int mi
 		}
 	}
 	
-	sumVariants = X.rowwise().sum();
-	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>=minVariants) sumVariants(i) = 1.0;
-		else sumVariants(i) = 0.0;
-	}
-	MatrixXd Y = subsetRowsDenseMatrix(X,sumVariants);
-	
-	VectorXd sumFilteredVariants = Y.rowwise().sum();
+	VectorXd sumFilteredVariants = X.rowwise().sum();
 	double totalPossiblePairs = numAlleles*(numAlleles-1.0)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1.0)/2.0;
 	VectorXd weights = VectorXd::Zero(totalPairs.size());
@@ -267,12 +218,12 @@ MatrixXd sMatrixCpp_dense(MatrixXd X, bool Djac=false, bool phased=false, int mi
 	
 	MatrixXd s_matrix_numerator;
 	if(Djac) {
-		s_matrix_numerator = Y.transpose() * Y;
+		s_matrix_numerator = X.transpose() * X;
 	} else {
-		MatrixXd Z = Y.array().colwise() * weights.array();
-		s_matrix_numerator = Z.transpose() * Y;
+		MatrixXd Z = X.array().colwise() * weights.array();
+		s_matrix_numerator = Z.transpose() * X;
 	}
-	MatrixXd s_matrix_hap = s_matrix_numerator * (1.0/Y.rows());
+	MatrixXd s_matrix_hap = s_matrix_numerator * (1.0/X.rows());
 	
 	MatrixXd s_matrix_dip;
 	if(phased) {
@@ -344,30 +295,29 @@ MatrixXd jaccardMatrixCpp_sparse(MatrixXi& T, int nrows, int ncols) {
 
 // cpp function to compute the s-matrix
 // [[Rcpp::export]]
-MatrixXd sMatrixCpp_sparse(MatrixXi& T, int nrows, int ncols, bool Djac=false, bool phased=false, int minVariants=0) {
-	SparseMatrix<int> X = triplesToSparseIntMatrix(T,nrows,ncols);
+MatrixXd sMatrixCpp_sparse(MatrixXd& T, int nrows, int ncols, bool Djac=false, bool phased=false) {
+	SparseMatrix<double> X = triplesToSparseDoubleMatrix(T,nrows,ncols);
 	
 	double numAlleles = X.cols();
 	if(!phased) numAlleles *= 2.0;
-	VectorXd sumVariants = rowSumsSparseIntMatrix(X);
+	VectorXd sumVariants = rowSumsSparseDoubleMatrix(X);
 	
-	for(int k=0; k<X.outerSize(); k++) {
-		for(SparseMatrix<int>::InnerIterator it(X,k); it; ++it) {
-			if(sumVariants(it.row())>0.5*numAlleles) {
-				if(phased) X.coeffRef(it.row(),it.col()) = 1.0 - it.value();
-				else X.coeffRef(it.row(),it.col()) = 2.0 - it.value();
+	X = X.transpose();
+	VectorXd temp;
+	for(int i=0; i<sumVariants.size(); i++) {
+		if(sumVariants(i)>0.5*numAlleles) {
+			temp = X.col(i);
+			if(phased) temp = 1.0 - temp.array();
+			else temp = 2.0 - temp.array();
+			X.col(i) *= 0.0;
+			for(int j=0; j<temp.size(); j++) {
+				if(temp(j)>0.0) X.insert(j,i) = temp(j);
 			}
 		}
 	}
+	X = X.transpose();
 	
-	sumVariants = rowSumsSparseIntMatrix(X);
-	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>=minVariants) sumVariants(i) = 1.0;
-		else sumVariants(i) = 0.0;
-	}
-	SparseMatrix<double> Y = subsetRowsSparseIntMatrix(X,sumVariants);
-	
-	VectorXd sumFilteredVariants = rowSumsSparseDoubleMatrix(Y);
+	VectorXd sumFilteredVariants = rowSumsSparseDoubleMatrix(X);
 	double totalPossiblePairs = numAlleles*(numAlleles-1.0)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1.0)/2.0;
 	VectorXd weights = VectorXd::Zero(totalPairs.size());
@@ -378,12 +328,12 @@ MatrixXd sMatrixCpp_sparse(MatrixXi& T, int nrows, int ncols, bool Djac=false, b
 	
 	MatrixXd s_matrix_numerator;
 	if(Djac) {
-		s_matrix_numerator = Y.transpose() * Y;
+		s_matrix_numerator = X.transpose() * X;
 	} else {
-		SparseMatrix<double> Z = colMultiplySparseDoubleMatrix(Y,weights);
-		s_matrix_numerator = Z.transpose() * Y;
+		SparseMatrix<double> Z = colMultiplySparseDoubleMatrix(X,weights);
+		s_matrix_numerator = Z.transpose() * X;
 	}
-	MatrixXd s_matrix_hap = s_matrix_numerator * (1.0/Y.rows());
+	MatrixXd s_matrix_hap = s_matrix_numerator * (1.0/X.rows());
 	
 	MatrixXd s_matrix_dip;
 	if(phased) {
@@ -506,7 +456,7 @@ MatrixXd fastJaccardEVsCpp_dense(MatrixXd X, int k, int q=2) {
 }
 
 // [[Rcpp::export]]
-MatrixXd fastSMatrixEVsCpp_dense(MatrixXd X, int k, bool Djac=false, int minVariants=0, int q=2) {
+MatrixXd fastSMatrixEVsCpp_dense(MatrixXd X, int k, bool Djac=false, int q=2) {
 	int numAlleles = 2.0*X.cols();
 	VectorXd sumVariants = X.rowwise().sum();
 	for(int i=0; i<sumVariants.size(); i++) {
@@ -515,14 +465,7 @@ MatrixXd fastSMatrixEVsCpp_dense(MatrixXd X, int k, bool Djac=false, int minVari
 		}
 	}
 	
-	sumVariants = X.rowwise().sum();
-	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>=minVariants) sumVariants(i) = 1.0;
-		else sumVariants(i) = 0.0;
-	}
-	MatrixXd Y = subsetRowsDenseMatrix(X,sumVariants);
-	
-	VectorXd sumFilteredVariants = Y.rowwise().sum();
+	VectorXd sumFilteredVariants = X.rowwise().sum();
 	double totalPossiblePairs = numAlleles*(numAlleles-1.0)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1.0)/2.0;
 	VectorXd weights = VectorXd::Zero(totalPairs.size());
@@ -530,7 +473,7 @@ MatrixXd fastSMatrixEVsCpp_dense(MatrixXd X, int k, bool Djac=false, int minVari
 		if(totalPairs(i)>0.0) weights(i) = totalPossiblePairs/totalPairs(i);
 		else weights(i) = 0.0;
 	}
-	int s_matrix_denominator = Y.rows();
+	int s_matrix_denominator = X.rows();
 	
 	if(Djac) {
 		double a = 1.0/sqrt(4.0*s_matrix_denominator);
@@ -650,27 +593,27 @@ MatrixXd fastJaccardEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, int 
 }
 
 // [[Rcpp::export]]
-MatrixXd fastSMatrixEVsCpp_sparse(MatrixXi& T, int nrows, int ncols, int k, bool Djac=false, int minVariants=0, int q=2) {
-	SparseMatrix<int> X = triplesToSparseIntMatrix(T,nrows,ncols);
+MatrixXd fastSMatrixEVsCpp_sparse(MatrixXd& T, int nrows, int ncols, int k, bool Djac=false, int q=2) {
+	SparseMatrix<double> X = triplesToSparseDoubleMatrix(T,nrows,ncols);
 	
 	double numAlleles = X.cols();
-	VectorXd sumVariants = rowSumsSparseIntMatrix(X);
-	for(int k=0; k<X.outerSize(); k++) {
-		for(SparseMatrix<int>::InnerIterator it(X,k); it; ++it) {
-			if(sumVariants(it.row())>0.5*numAlleles) {
-				X.coeffRef(it.row(),it.col()) = 2.0 - it.value();
+	VectorXd sumVariants = rowSumsSparseDoubleMatrix(X);
+	
+	X = X.transpose();
+	VectorXd temp;
+	for(int i=0; i<sumVariants.size(); i++) {
+		if(sumVariants(i)>0.5*numAlleles) {
+			temp = X.col(i);
+			temp = 2.0 - temp.array();
+			X.col(i) *= 0.0;
+			for(int j=0; j<temp.size(); j++) {
+				if(temp(j)>0.0) X.insert(j,i) = temp(j);
 			}
 		}
 	}
+	X = X.transpose();
 	
-	sumVariants = rowSumsSparseIntMatrix(X);
-	for(int i=0; i<sumVariants.size(); i++) {
-		if(sumVariants(i)>=minVariants) sumVariants(i) = 1.0;
-		else sumVariants(i) = 0.0;
-	}
-	SparseMatrix<double> Y = subsetRowsSparseIntMatrix(X,sumVariants);
-	
-	VectorXd sumFilteredVariants = rowSumsSparseDoubleMatrix(Y);
+	VectorXd sumFilteredVariants = rowSumsSparseDoubleMatrix(X);
 	double totalPossiblePairs = numAlleles*(numAlleles-1.0)/2.0;
 	VectorXd totalPairs = sumFilteredVariants.array()*(sumFilteredVariants.array()-1.0)/2.0;
 	VectorXd weights = VectorXd::Zero(totalPairs.size());
@@ -678,18 +621,18 @@ MatrixXd fastSMatrixEVsCpp_sparse(MatrixXi& T, int nrows, int ncols, int k, bool
 		if(totalPairs(i)>0.0) weights(i) = totalPossiblePairs/totalPairs(i);
 		else weights(i) = 0.0;
 	}
-	int s_matrix_denominator = Y.rows();
+	int s_matrix_denominator = X.rows();
 	
 	if(Djac) {
 		double a = 1.0/sqrt(4.0*s_matrix_denominator);
 		VectorXd v = VectorXd::Zero(X.rows()).array() + 1.0;
 		VectorXd w = VectorXd::Zero(X.rows());
-		return randomizedSVD_XtX_Cpp_sparse(a,v,Y,w,k,q);
+		return randomizedSVD_XtX_Cpp_sparse(a,v,X,w,k,q);
 	} else {
 		double a = 1.0/sqrt(4.0*s_matrix_denominator);
 		VectorXd v = weights.array().cwiseSqrt();
 		VectorXd w = VectorXd::Zero(X.rows());
-		return randomizedSVD_XtX_Cpp_sparse(a,v,Y,w,k,q);
+		return randomizedSVD_XtX_Cpp_sparse(a,v,X,w,k,q);
 	}
 }
 

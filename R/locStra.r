@@ -85,6 +85,41 @@ powerMethod <- function(m,initvector=0) {
 
 
 
+#' Auxiliary function to invert minor alleles and to select those variants/loci exceeding a minimal cutoff value.
+#' 
+#' @param m A (sparse) input matrix. The input matrix is assumed to be oriented to contain the data for one individual per column.
+#' @param phased Boolean flag to indicate if the input matrix is phased. Default is \code{phased=FALSE}.
+#' @param invertMinorAllele Boolean flag to indicate if the minor allele should be inverted. Default is \code{invertMinorAllele=TRUE}.
+#' @param minVariants Cutoff value for minimal number of variants for keeping a locus. Default is \code{minVariants=0}.
+#' 
+#' @return The processed matrix with pruned variants/loci.
+#' 
+#' @importFrom Rdpack reprompt
+#' 
+#' @examples
+#' require(locStra)
+#' m <- matrix(sample(0:1,100,replace=TRUE),ncol=10)
+#' print(selectVariants(m))
+#' 
+#' @export
+selectVariants <- function(m,phased=FALSE,invertMinorAllele=TRUE,minVariants=0) {
+	if(invertMinorAllele) {
+		numAlleles <- ifelse(phased, ncol(m), 2*ncol(m))
+		sumVariants <- rowSums(m)
+		indices <- sumVariants>(numAlleles/2)
+		if(phased) {
+			m[indices,] <- 1 - m[indices,]
+		} else {
+			m[indices,] <- 2 - m[indices,]
+		}
+	}
+	sumVariants <- rowSums(m)
+	m <- m[sumVariants>minVariants,]
+	return(m)
+}
+
+
+
 # ******************************************************************************************
 # NOT EXPORTED: full R functions for dense and sparse matrices
 # ******************************************************************************************
@@ -109,7 +144,7 @@ jaccardMatrixR <- function(X) {
 	return(res)
 }
 
-sMatrixR <- function(X, Djac=FALSE, phased=FALSE, minVariants=0) {
+sMatrixR <- function(X, Djac=FALSE, phased=FALSE) {
 	numAlleles <- ifelse(phased, ncol(X), 2*ncol(X))
 	sumVariants <- rowSums(X)
 	invertMinorAllele <- sumVariants>(numAlleles/2)
@@ -119,8 +154,6 @@ sMatrixR <- function(X, Djac=FALSE, phased=FALSE, minVariants=0) {
 		X[invertMinorAllele,] <- 2 - X[invertMinorAllele,]
 	}
 	
-	sumVariants <- rowSums(X)
-	X <- X[sumVariants>=minVariants,]
 	sumFilteredVariants <- rowSums(X)
 	totalPossiblePairs <- numAlleles*(numAlleles-1)/2
 	totalPairs <- sumFilteredVariants*(sumFilteredVariants-1)/2
@@ -226,14 +259,12 @@ fastJaccardEVsR <- function(X, k, q=2) {
 }
 
 # always phased=FALSE
-fastSMatrixEVsR <- function(X, k, Djac=FALSE, minVariants=0, q=2) {
+fastSMatrixEVsR <- function(X, k, Djac=FALSE, q=2) {
 	numAlleles <- 2*ncol(X)
 	sumVariants <- rowSums(X)
 	invertMinorAllele <- sumVariants>(numAlleles/2)
 	X[invertMinorAllele,] <- 2 - X[invertMinorAllele,]
 	
-	sumVariants <- rowSums(X)
-	X <- X[sumVariants>=minVariants,]
 	sumFilteredVariants <- rowSums(X)
 	totalPossiblePairs <- numAlleles*(numAlleles-1)/2
 	totalPairs <- sumFilteredVariants*(sumFilteredVariants-1)/2
@@ -348,7 +379,6 @@ jaccardMatrix <- function(m,useCpp=TRUE,sparse=TRUE) {
 #' @param sparse Flag to switch between purpose-built dense or sparse implementations. Default is \code{sparse=TRUE}.
 #' @param Djac Flag to switch between the unweighted (\code{Djac=TRUE}) or weighted (\code{Djac=FALSE}) version. Default is \code{Djac=FALSE}.
 #' @param phased Boolean flag to indicate if the input matrix is phased. Default is \code{phased=FALSE}.
-#' @param minVariants Integer cutoff value for minimal number of variants. Default is \code{minVariants=0}.
 #' 
 #' @return The s-matrix (the weighted Jaccard matrix) of \code{m}.
 #' 
@@ -363,13 +393,13 @@ jaccardMatrix <- function(m,useCpp=TRUE,sparse=TRUE) {
 #' print(sMatrix(sparseM))
 #' 
 #' @export
-sMatrix <- function(m,useCpp=TRUE,sparse=TRUE,Djac=FALSE,phased=FALSE,minVariants=0) {
+sMatrix <- function(m,useCpp=TRUE,sparse=TRUE,Djac=FALSE,phased=FALSE) {
 	if(useCpp) {
-		if(sparse) sMatrixCpp_sparse(sparseToList(m),nrow(m),ncol(m),Djac,phased,minVariants)
-		else sMatrixCpp_dense(as.matrix(m),Djac,phased,minVariants)
+		if(sparse) sMatrixCpp_sparse(sparseToList(m),nrow(m),ncol(m),Djac,phased)
+		else sMatrixCpp_dense(as.matrix(m),Djac,phased)
 	}
 	else {
-		sMatrixR(m,Djac,phased,minVariants)
+		sMatrixR(m,Djac,phased)
 	}
 }
 
@@ -539,7 +569,6 @@ fastJaccardEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
 #' @param useCpp Flag to switch between R or C++ implementations. Default is \code{useCpp=TRUE}.
 #' @param sparse Flag to switch between purpose-built dense or sparse implementations. Default is \code{sparse=TRUE}.
 #' @param Djac Flag to switch between the unweighted (\code{Djac=TRUE}) or weighted (\code{Djac=FALSE}) version. Default is \code{Djac=FALSE}.
-#' @param minVariants Integer cutoff value for minimal number of variants. Default is \code{minVariants=0}.
 #' @param q The number of power iteration steps (default is \code{q=2}).
 #' 
 #' @return The k leading eigenvectors of the s-matrix of \code{m} as a column matrix.
@@ -556,13 +585,13 @@ fastJaccardEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,q=2) {
 #' print(fastSMatrixEVs(sparseM,k=2,useCpp=FALSE))
 #' 
 #' @export
-fastSMatrixEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,Djac=FALSE,minVariants=0,q=2) {
+fastSMatrixEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,Djac=FALSE,q=2) {
 	if(useCpp) {
-		if(sparse) fastSMatrixEVsCpp_sparse(sparseToList(m),nrow(m),ncol(m),k,Djac,minVariants,q)
-		else fastSMatrixEVsCpp_dense(as.matrix(m),k,Djac,minVariants,q)
+		if(sparse) fastSMatrixEVsCpp_sparse(sparseToList(m),nrow(m),ncol(m),k,Djac,q)
+		else fastSMatrixEVsCpp_dense(as.matrix(m),k,Djac,q)
 	}
 	else {
-		fastSMatrixEVsR(m,k,Djac,minVariants,q)
+		fastSMatrixEVsR(m,k,Djac,q)
 	}
 }
 

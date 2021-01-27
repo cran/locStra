@@ -4,15 +4,7 @@
 \alias{fastSMatrixEVs}
 \title{Computation of the k leading eigenvectors of the s-matrix (the weighted Jaccard similarity matrix) for a (sparse) input matrix. Note that in contrast to the parameters of the function \code{sMatrix}, the choice \code{phased=FALSE} cannot be modified for the fast eigenvector computation.}
 \usage{
-fastSMatrixEVs(
-  m,
-  k,
-  useCpp = TRUE,
-  sparse = TRUE,
-  Djac = FALSE,
-  minVariants = 0,
-  q = 2
-)
+fastSMatrixEVs(m, k, useCpp = TRUE, sparse = TRUE, Djac = FALSE, q = 2)
 }
 \arguments{
 \item{m}{A (sparse) matrix for which the eigenvectors of its s-matrix are sought. The input matrix is assumed to be oriented to contain the data for one individual per column.}
@@ -24,8 +16,6 @@ fastSMatrixEVs(
 \item{sparse}{Flag to switch between purpose-built dense or sparse implementations. Default is \code{sparse=TRUE}.}
 
 \item{Djac}{Flag to switch between the unweighted (\code{Djac=TRUE}) or weighted (\code{Djac=FALSE}) version. Default is \code{Djac=FALSE}.}
-
-\item{minVariants}{Integer cutoff value for minimal number of variants. Default is \code{minVariants=0}.}
 
 \item{q}{The number of power iteration steps (default is \code{q=2}).}
 }

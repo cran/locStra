@@ -4,14 +4,7 @@
 \alias{sMatrix}
 \title{C++ implementation to compute the s-matrix (the weighted Jaccard similarity matrix) for a (sparse) input matrix as in the 'Stego' package: https://github.com/dschlauch/stego}
 \usage{
-sMatrix(
-  m,
-  useCpp = TRUE,
-  sparse = TRUE,
-  Djac = FALSE,
-  phased = FALSE,
-  minVariants = 0
-)
+sMatrix(m, useCpp = TRUE, sparse = TRUE, Djac = FALSE, phased = FALSE)
 }
 \arguments{
 \item{m}{A (sparse) matrix for which the s-matrix is sought. The input matrix is assumed to be oriented to contain the data for one individual per column.}
@@ -23,8 +16,6 @@ sMatrix(
 \item{Djac}{Flag to switch between the unweighted (\code{Djac=TRUE}) or weighted (\code{Djac=FALSE}) version. Default is \code{Djac=FALSE}.}
 
 \item{phased}{Boolean flag to indicate if the input matrix is phased. Default is \code{phased=FALSE}.}
-
-\item{minVariants}{Integer cutoff value for minimal number of variants. Default is \code{minVariants=0}.}
 }
 \value{
 The s-matrix (the weighted Jaccard matrix) of \code{m}.

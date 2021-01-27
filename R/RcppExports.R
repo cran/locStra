@@ -13,8 +13,8 @@ jaccardMatrixCpp_dense <- function(X) {
     .Call('_locStra_jaccardMatrixCpp_dense', PACKAGE = 'locStra', X)
 }
 
-sMatrixCpp_dense <- function(X, Djac = FALSE, phased = FALSE, minVariants = 0L) {
-    .Call('_locStra_sMatrixCpp_dense', PACKAGE = 'locStra', X, Djac, phased, minVariants)
+sMatrixCpp_dense <- function(X, Djac = FALSE, phased = FALSE) {
+    .Call('_locStra_sMatrixCpp_dense', PACKAGE = 'locStra', X, Djac, phased)
 }
 
 grmCpp_dense <- function(X, robust = TRUE) {
@@ -29,8 +29,8 @@ jaccardMatrixCpp_sparse <- function(T, nrows, ncols) {
     .Call('_locStra_jaccardMatrixCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols)
 }
 
-sMatrixCpp_sparse <- function(T, nrows, ncols, Djac = FALSE, phased = FALSE, minVariants = 0L) {
-    .Call('_locStra_sMatrixCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols, Djac, phased, minVariants)
+sMatrixCpp_sparse <- function(T, nrows, ncols, Djac = FALSE, phased = FALSE) {
+    .Call('_locStra_sMatrixCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols, Djac, phased)
 }
 
 grmCpp_sparse <- function(T, nrows, ncols, robust = TRUE) {
@@ -45,8 +45,8 @@ fastJaccardEVsCpp_dense <- function(X, k, q = 2L) {
     .Call('_locStra_fastJaccardEVsCpp_dense', PACKAGE = 'locStra', X, k, q)
 }
 
-fastSMatrixEVsCpp_dense <- function(X, k, Djac = FALSE, minVariants = 0L, q = 2L) {
-    .Call('_locStra_fastSMatrixEVsCpp_dense', PACKAGE = 'locStra', X, k, Djac, minVariants, q)
+fastSMatrixEVsCpp_dense <- function(X, k, Djac = FALSE, q = 2L) {
+    .Call('_locStra_fastSMatrixEVsCpp_dense', PACKAGE = 'locStra', X, k, Djac, q)
 }
 
 fastGrmEVsCpp_dense <- function(X, k, robust = TRUE, q = 2L) {
@@ -61,8 +61,8 @@ fastJaccardEVsCpp_sparse <- function(T, nrows, ncols, k, q = 2L) {
     .Call('_locStra_fastJaccardEVsCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols, k, q)
 }
 
-fastSMatrixEVsCpp_sparse <- function(T, nrows, ncols, k, Djac = FALSE, minVariants = 0L, q = 2L) {
-    .Call('_locStra_fastSMatrixEVsCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols, k, Djac, minVariants, q)
+fastSMatrixEVsCpp_sparse <- function(T, nrows, ncols, k, Djac = FALSE, q = 2L) {
+    .Call('_locStra_fastSMatrixEVsCpp_sparse', PACKAGE = 'locStra', T, nrows, ncols, k, Djac, q)
 }
 
 fastGrmEVsCpp_sparse <- function(T, nrows, ncols, k, robust = TRUE, q = 2L) {

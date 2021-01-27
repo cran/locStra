@@ -11,6 +11,7 @@ export(jaccardMatrix)
 export(makeWindows)
 export(powerMethod)
 export(sMatrix)
+export(selectVariants)
 importFrom(Rdpack,reprompt)
 useDynLib(locStra)
 
