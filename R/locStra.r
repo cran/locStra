@@ -10,7 +10,8 @@
 # 5) the largest eigenvector via the power method (von Mises iteration), see 'https://en.wikipedia.org/wiki/Power_iteration'.
 # 6) an automated full run of global and local correlations in population stratification data with the function 'fullscan'.
 # 7) the windows to be used in the function 'fullscan'.
-# 8) the k leading eigenvectors of the covariance matrix, Jaccard matrix, s-matrix, and (classic or robust) genomic relationship matrices without actually computing the similarity matrices. These are the functions "fastCovEVs", "fastJaccardEVs", "fastGrmEVs", and "fastSMatrixEVs".
+# 8) a cleaned input matrix in which the minor alleles are inverted, and only those variants/loci exceeding a minimal cutoff value are selected.
+# 9) the k leading eigenvectors of the covariance matrix, Jaccard matrix, s-matrix, and (classic or robust) genomic relationship matrices without actually computing the similarity matrices. These are the functions "fastCovEVs", "fastJaccardEVs", "fastGrmEVs", and "fastSMatrixEVs".
 # 
 # All functions work with both standard (dense) R matrices and sparse matrix objects of the 'Matrix' class while never unpacking the sparse matrix during computation.
 # All functions have flags to switch between R and C++ implementations, as well as separate implementations for dense or sparse matrices.
@@ -448,7 +449,7 @@ grMatrix <- function(m,useCpp=TRUE,sparse=TRUE,robust=TRUE) {
 #' 
 #' @return A two-column matrix containing per row the global and local summary statistics for each window. Plotting the correlation data of the returned matrix gives a figure analogously to the figure shown here, which was generated with the example code below.
 #' 
-#' \figure{fig.pdf}{options: width=5in}
+#' \figure{fig.pdf}
 #' 
 #' @importFrom Rdpack reprompt
 #' @references Dmitry Prokopenko, Julian Hecker, Edwin Silverman, Marcello Pagano, Markus Noethen, Christian Dina, Christoph Lange and Heide Fier (2016). Utilizing the Jaccard index to reveal population stratification in sequencing data: a simulation study and an application to the 1000 Genomes Project. Bioinformatics, 32(9):1366-1372.

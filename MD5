@@ -1,7 +1,7 @@
-adeec3e2f560140e143465864a058713 *DESCRIPTION
+30365e5e14fc6160821fa40d954ed389 *DESCRIPTION
 52fbadba9d128685dc76a520752c7176 *NAMESPACE
 38dff70742fc8a2a79d1b04fc6db8aa7 *R/RcppExports.R
-f6a6601a6a85ad034b800c276e0a5377 *R/locStra.r
+612fd36f0bd9fe82c99f414f761adadc *R/locStra.r
 13fd92724702b971756998410392eda4 *R/testdata.R
 d07b215d0da803042a06bc4d2856321f *data/testdata.RData
 3e32f2e1273b305980b0e4f5206fbc76 *man/covMatrix.Rd
@@ -10,7 +10,7 @@ a04f00e5ef3cc600dcae0013cae0f7d8 *man/fastGrmEVs.Rd
 90e5bcf99723b609f580506d9fc3d923 *man/fastJaccardEVs.Rd
 1cf0f12671fc0ef8507702d670887343 *man/fastSMatrixEVs.Rd
 068be12e6051a9ddd5abca4e8d4c807b *man/figures/fig.pdf
-a1ab1897eb3cfed857708c105491db80 *man/fullscan.Rd
+36cb68974bceac5632377bfebc578291 *man/fullscan.Rd
 c02c92d5c1c4036787b027acdddc718e *man/grMatrix.Rd
 33545737662fe54bbb0e8db7d9baae12 *man/jaccardMatrix.Rd
 2dc89929272e7f47283256592b7b3ab0 *man/makeWindows.Rd

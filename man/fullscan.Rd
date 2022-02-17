@@ -20,7 +20,7 @@ fullscan(m, windows, matrixFunction, summaryFunction, comparisonFunction)
 \value{
 A two-column matrix containing per row the global and local summary statistics for each window. Plotting the correlation data of the returned matrix gives a figure analogously to the figure shown here, which was generated with the example code below.
 
-\figure{fig.pdf}{options: width=5in}
+\figure{fig.pdf}
 }
 \description{
 A full scan of the input data \code{m} using a collection of windows given by the two-column matrix \code{windows}. For each window, the data is processed using the function \code{matrixFunction} (this could be, e.g., the \code{covMatrix} function), then the processed data is summarized using the function \code{summaryFunction} (e.g., the largest eigenvector computed with the function \code{powerMethod}), and finally the global and local summaries are compared using the function \code{comparisonFunction} (e.g., the vector correlation with R's function \code{cor}). The function returns a two-column matrix which contains per row the global summary statistics (e.g., the correlation between the global and local eigenvectors) and the local summary statistics (e.g., the correlation between the local eigenvectors of the previous and current windows) for each window.
