@@ -1,9 +1,13 @@
-30365e5e14fc6160821fa40d954ed389 *DESCRIPTION
-52fbadba9d128685dc76a520752c7176 *NAMESPACE
+5c1d2f5f10296c2ca40d0f0968224874 *DESCRIPTION
+96a3d45969d2f0fea4f41ba2f8bde979 *NAMESPACE
 38dff70742fc8a2a79d1b04fc6db8aa7 *R/RcppExports.R
-612fd36f0bd9fe82c99f414f761adadc *R/locStra.r
+a757677ad60ce4cbf81856676ee62ca3 *R/locStra.r
 13fd92724702b971756998410392eda4 *R/testdata.R
 d07b215d0da803042a06bc4d2856321f *data/testdata.RData
+b8bb6815ca068a59dda8ff315eb57335 *man/bed_fastCovEVs.Rd
+360f2ca1df81a7ca519d62e2b45043b7 *man/bed_fastGrmEVs.Rd
+a16657506e865802f36cbfffba46cb7e *man/bed_fastJaccardEVs.Rd
+df9ca3ed66b4fb154be05bb419eff26d *man/bed_fastSMatrixEVs.Rd
 3e32f2e1273b305980b0e4f5206fbc76 *man/covMatrix.Rd
 be855549f4d5a9844049f1d8a6231684 *man/fastCovEVs.Rd
 a04f00e5ef3cc600dcae0013cae0f7d8 *man/fastGrmEVs.Rd

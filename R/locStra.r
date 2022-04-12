@@ -3,21 +3,28 @@
 # 
 # This file provides functions to compute:
 # 
-# 1) the covariance matrix.
-# 2) the Jaccard similarity matrix.
-# 3) the s-matrix as in the 'Stego' package, available on 'https://github.com/dschlauch/stego'.
-# 4) the classic and robust versions of the genomic relationship matrix (grm).
-# 5) the largest eigenvector via the power method (von Mises iteration), see 'https://en.wikipedia.org/wiki/Power_iteration'.
-# 6) an automated full run of global and local correlations in population stratification data with the function 'fullscan'.
-# 7) the windows to be used in the function 'fullscan'.
-# 8) a cleaned input matrix in which the minor alleles are inverted, and only those variants/loci exceeding a minimal cutoff value are selected.
-# 9) the k leading eigenvectors of the covariance matrix, Jaccard matrix, s-matrix, and (classic or robust) genomic relationship matrices without actually computing the similarity matrices. These are the functions "fastCovEVs", "fastJaccardEVs", "fastGrmEVs", and "fastSMatrixEVs".
+# 01) the covariance matrix.
+# 02) the Jaccard similarity matrix.
+# 03) the s-matrix as in the 'Stego' package, available on 'https://github.com/dschlauch/stego'.
+# 04) the classic and robust versions of the genomic relationship matrix (grm).
+# 05) the largest eigenvector via the power method (von Mises iteration), see 'https://en.wikipedia.org/wiki/Power_iteration'.
+# 06) an automated full run of global and local correlations in population stratification data with the function 'fullscan'.
+# 07) the windows to be used in the function 'fullscan'.
+# 08) a cleaned input matrix in which the minor alleles are inverted, and only those variants/loci exceeding a minimal cutoff value are selected.
+# 09) the k leading eigenvectors of the covariance matrix, Jaccard matrix, s-matrix, and (classic or robust) genomic relationship matrices without actually computing the similarity matrices. These are the functions "fastCovEVs", "fastJaccardEVs", "fastGrmEVs", and "fastSMatrixEVs".
+# 10) k leading eigenvectors of the covariance matrix, Jaccard matrix, s-matrix, and (classic or robust) genomic relationship matrices directly from bed+bim+fam files.
 # 
 # All functions work with both standard (dense) R matrices and sparse matrix objects of the 'Matrix' class while never unpacking the sparse matrix during computation.
 # All functions have flags to switch between R and C++ implementations, as well as separate implementations for dense or sparse matrices.
 # Important note: For all functions the input matrix is always assumed to be oriented to contain the genomic data for one individual per column.
 # ********************************************************************************************************************************************************************
+
 #' @useDynLib locStra
+#' @import Matrix
+#' @importFrom Rcpp evalCpp
+#' @importFrom stats rnorm
+#' @importFrom RSpectra svds
+#' @importFrom bigsnpr bed bed_prodVec bed_cprodVec
 
 
 
@@ -301,6 +308,142 @@ fastGrmEVsR <- function(X, k, robust=TRUE, q=2) {
 		v <- 1/sqrt(qv)
 		w <- 2*p
 		randomizedSVD_XtX(a=a,v=v,A=X,w=w,k=k,q=q)
+	}
+}
+
+
+
+# ******************************************************************************************
+# NOT EXPORTED: basic matrix operations with a bigsnpr object
+# ******************************************************************************************
+
+bigsnpr_rowSums <- function(B) {
+	bed_prodVec(B,rep(1,B$ncol))
+}
+
+bigsnpr_rowMeans <- function(B) {
+	bigsnpr_rowSums(B)/B$ncol
+}
+
+bigsnpr_colSums <- function(B) {
+	bed_cprodVec(B,rep(1,B$nrow))
+}
+
+bigsnpr_colMeans <- function(B) {
+	bigsnpr_colSums(B)/B$nrow
+}
+
+# calculate B %*% m
+bigsnpr_multiply <- function(B,m) {
+	res <- matrix(0,nrow=B$nrow,ncol=ncol(m))
+	for(i in 1:ncol(m)) {
+		res[,i] <- bed_prodVec(B,m[,i])
+	}
+	return(res)
+}
+
+# calculate t(B) %*% m
+bigsnpr_transpose_multiply <- function(B,m) {
+	res <- matrix(0,nrow=B$ncol,ncol=ncol(m))
+	for(i in 1:ncol(m)) {
+		res[,i] <- bed_cprodVec(B,m[,i])
+	}
+	return(res)
+}
+
+
+
+# ******************************************************************************************
+# # NOT EXPORTED: fast eigenvector computation in R for bigsnpr objects
+# ******************************************************************************************
+
+bigsnpr_randomizedSVD_XtX <- function(a,v,B,w,k,q=2) {
+	k0 <- k
+	k <- max(k,2)
+	Y <- matrix(rnorm(B$nrow*2*k),nrow=B$nrow)
+	Y <- a*( bigsnpr_transpose_multiply(B,v*Y) - outer(rep(1,B$ncol),colSums(v*w*Y)) )
+	for(i in 1:q) {
+		Y <- a*v*( bigsnpr_multiply(B,Y) - outer(w,colSums(Y)) )
+		Y <- a*( bigsnpr_transpose_multiply(B,v*Y) - outer(rep(1,B$ncol),colSums(v*w*Y)) )
+	}
+	temp <- qr(Y)
+	Q <- qr.Q(temp)
+	BB <- t( a*v*(bigsnpr_multiply(B,Q) - outer(w,colSums(Q))) )
+	temp <- svds(BB,k=k,nu=k,nv=0)
+	U <- Q %*% temp$u
+	return(U[,1:k0])
+}
+
+# function implicitly transposes B for every operation
+bigsnpr_randomizedSVD_XXt <- function(a,v,B,w,k,q=2) {
+	k0 <- k
+	k <- max(k,2)
+	Y <- matrix(rnorm(B$nrow*2*k),nrow=B$nrow)
+	Y <- a*v*( bigsnpr_transpose_multiply(B,Y) - outer(w,colSums(Y)) )
+	for(i in 1:q) {
+		Y <- a*( bigsnpr_multiply(B,v*Y) - outer(rep(1,B$nrow),colSums(v*w*Y)) )
+		Y <- a*v*( bigsnpr_transpose_multiply(B,Y) - outer(w,colSums(Y)) )
+	}
+	temp <- qr(Y)
+	Q <- qr.Q(temp)
+	BB <- a*( t(bigsnpr_multiply(B,Q*v)) - colSums(Q*v*w) )
+	temp <- svds(BB,k=k,nu=k,nv=0)
+	U <- Q %*% temp$u
+	return(U[,1:k0])
+}
+
+bigsnpr_fastCovEVsR <- function(B, k, q=2) {
+	a <- 1/sqrt(B$nrow-1)
+	v <- 1
+	w <- bigsnpr_colMeans(B)
+	bigsnpr_randomizedSVD_XXt(a=a,v=v,B=B,w=w,k=k,q=q)
+}
+
+bigsnpr_fastJaccardEVsR <- function(B, k, q=2) {
+	a <- 1/sqrt(2*max(bigsnpr_colSums(B)))
+	v <- 1
+	w <- rep(0,B$nrow)
+	bigsnpr_randomizedSVD_XtX(a=a,v=v,B=B,w=w,k=k,q=q)
+}
+
+# always phased=FALSE
+bigsnpr_fastSMatrixEVsR <- function(B, k, Djac=FALSE, q=2) {
+	numAlleles <- 2*B$ncol
+	sumFilteredVariants <- bigsnpr_rowSums(B)
+	totalPossiblePairs <- numAlleles*(numAlleles-1)/2
+	totalPairs <- sumFilteredVariants*(sumFilteredVariants-1)/2
+	weights <- ifelse(totalPairs>0,totalPossiblePairs/totalPairs,0)
+	s_matrix_denominator <- B$nrow
+	
+	if(Djac) {
+		a <- 1/sqrt(4*s_matrix_denominator)
+		v <- 1
+		w <- rep(0,B$nrow)
+		bigsnpr_randomizedSVD_XtX(a=a,v=v,B=B,w=w,k=k,q=q)
+	} else {
+		a <- 1/sqrt(4*s_matrix_denominator)
+		v <- sqrt(weights)
+		w <- rep(0,B$nrow)
+		bigsnpr_randomizedSVD_XtX(a=a,v=v,B=B,w=w,k=k,q=q)
+	}
+}
+
+bigsnpr_fastGrmEVsR <- function(B, k, robust=TRUE, q=2) {
+	# compute population frequencies across rows
+	p <- bigsnpr_rowMeans(B)/2
+	qv <- 2*p*(1-p)
+	# compute grm
+	if(robust) {
+		a <- 1/sqrt(sum(qv))
+		v <- 1
+		w <- 2*p
+		bigsnpr_randomizedSVD_XtX(a=a,v=v,B=B,w=w,k=k,q=q)
+	}
+	else {
+		a <- 1/sqrt(B$nrow)
+		v <- 1/sqrt(qv)
+		w <- 2*p
+		bigsnpr_randomizedSVD_XtX(a=a,v=v,B=B,w=w,k=k,q=q)
 	}
 }
 
@@ -629,4 +772,106 @@ fastGrmEVs <- function(m,k,useCpp=TRUE,sparse=TRUE,robust=TRUE,q=2) {
 	else {
 		fastGrmEVsR(m,k,robust,q)
 	}
+}
+
+
+
+# ******************************************************************************************
+# main functions: fast eigenvector computation from bed+bim+fam files
+# ******************************************************************************************
+
+#' Computation of the k leading eigenvectors of the covariance matrix directly from a bed+bim+fam file.
+#' 
+#' @param f The filename of the bed file (including its extension). The bim and fam files need to be in the same folder and have the same base filename.
+#' @param k The number of leading eigenvectors.
+#' @param q The number of power iteration steps (default is \code{q=2}).
+#' 
+#' @return The k leading eigenvectors of the covariance matrix of \code{m} as a column matrix.
+#' 
+#' @importFrom Rdpack reprompt
+#' @references R Core Team (2014). R: A Language and Environment for Statistical Computing. R Foundation for Stat Comp, Vienna, Austria.
+#' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
+#' @references F. Prive, M. Blum, H. Aschard, B.J. Vilhjalmsson (2022). bigsnpr: Analysis of Massive SNP Arrays. https://cran.r-project.org/package=bigsnpr
+#' 
+#' @examples
+#' require(locStra)
+#' 
+#' @export
+bed_fastCovEVs <- function(f,k,q=2) {
+	B <- bed(f)
+	bigsnpr_fastCovEVsR(B,k,q)
+}
+
+
+
+#' Computation of the k leading eigenvectors of the Jaccard similarity matrix directly from a bed+bim+fam file.. Note that this computation is only approximate and does not necessarily coincide with the result obtained by extracting the k leading eigenvectors of the Jaccard matrix computed with the function \code{jaccardMatrix}.
+#' 
+#' @param f The filename of the bed file (including its extension). The bim and fam files need to be in the same folder and have the same base filename.
+#' @param k The number of leading eigenvectors.
+#' @param q The number of power iteration steps (default is \code{q=2}).
+#' 
+#' @return The k leading eigenvectors of the Jaccard matrix of \code{m} as a column matrix.
+#' 
+#' @importFrom Rdpack reprompt
+#' @references Dmitry Prokopenko, Julian Hecker, Edwin Silverman, Marcello Pagano, Markus Noethen, Christian Dina, Christoph Lange and Heide Fier (2016). Utilizing the Jaccard index to reveal population stratification in sequencing data: a simulation study and an application to the 1000 Genomes Project. Bioinformatics, 32(9):1366-1372.
+#' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
+#' @references F. Prive, M. Blum, H. Aschard, B.J. Vilhjalmsson (2022). bigsnpr: Analysis of Massive SNP Arrays. https://cran.r-project.org/package=bigsnpr
+#' 
+#' @examples
+#' require(locStra)
+#' 
+#' @export
+bed_fastJaccardEVs <- function(f,k,q=2) {
+	B <- bed(f)
+	bigsnpr_fastJaccardEVsR(B,k,q)
+}
+
+
+
+#' Computation of the k leading eigenvectors of the s-matrix (the weighted Jaccard similarity matrix) directly from a bed+bim+fam file. Note that in contrast to the parameters of the function \code{sMatrix}, the choice \code{phased=FALSE} cannot be modified for the fast eigenvector computation. Moreover, inverting the minor allele is not possible when reading directly from external files.
+#' 
+#' @param f The filename of the bed file (including its extension). The bim and fam files need to be in the same folder and have the same base filename.
+#' @param k The number of leading eigenvectors.
+#' @param Djac Flag to switch between the unweighted (\code{Djac=TRUE}) or weighted (\code{Djac=FALSE}) version. Default is \code{Djac=FALSE}.
+#' @param q The number of power iteration steps (default is \code{q=2}).
+#' 
+#' @return The k leading eigenvectors of the s-matrix of \code{m} as a column matrix.
+#' 
+#' @importFrom Rdpack reprompt
+#' @references Daniel Schlauch (2016). Implementation of the stego algorithm - Similarity Test for Estimating Genetic Outliers. https://github.com/dschlauch/stego
+#' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
+#' @references F. Prive, M. Blum, H. Aschard, B.J. Vilhjalmsson (2022). bigsnpr: Analysis of Massive SNP Arrays. https://cran.r-project.org/package=bigsnpr
+#' 
+#' @examples
+#' require(locStra)
+#' 
+#' @export
+bed_fastSMatrixEVs <- function(f,k,Djac=FALSE,q=2) {
+	B <- bed(f)
+	bigsnpr_fastSMatrixEVsR(B,k,Djac,q)
+}
+
+
+
+#' Computation of the k leading eigenvectors of the genomic relationship matrix, defined in Yang et al. (2011), directly from a bed+bim+fam file.
+#' 
+#' @param f The filename of the bed file (including its extension). The bim and fam files need to be in the same folder and have the same base filename.
+#' @param k The number of leading eigenvectors.
+#' @param robust Flag to indicate if the classic (\code{robust=FALSE}) or robust (\code{robust=TRUE}) version of the genomic relationship matrix is desired. Default is \code{robust=TRUE}.
+#' @param q The number of power iteration steps (default is \code{q=2}).
+#' 
+#' @return The k leading eigenvectors of the genomic relationship matrix of \code{m} as a column matrix.
+#' 
+#' @importFrom Rdpack reprompt
+#' @references Yang J, Lee SH, Goddard ME, Visscher PM (2011). GCTA: a tool for genome-wide complex trait analysis. Am J Hum Genet, 88(1):76-82.
+#' @references N. Halko, P.G. Martinsson, and J.A. Tropp (2011). Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions. SIAM Review: 53(2), pp. 217--288.
+#' @references F. Prive, M. Blum, H. Aschard, B.J. Vilhjalmsson (2022). bigsnpr: Analysis of Massive SNP Arrays. https://cran.r-project.org/package=bigsnpr
+#' 
+#' @examples
+#' require(locStra)
+#' 
+#' @export
+bed_fastGrmEVs <- function(f,k,robust=TRUE,q=2) {
+	B <- bed(f)
+	bigsnpr_fastGrmEVsR(B,k,robust,q)
 }
